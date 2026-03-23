@@ -16,14 +16,31 @@ App local:
 
 - http://localhost:8080
 
-## Option 1: AWS App Runner
+## Option 1: AWS App Runner from source repository
+
+Use [apprunner.yaml](C:\Users\PC\Documents\New project\apprunner.yaml) only when you create the App Runner service from a GitHub source repository.
+
+1. Connect the GitHub repository to App Runner.
+2. Create the service using source code deployment.
+3. Let App Runner read `apprunner.yaml`.
+4. App Runner will:
+   - install dependencies with `npm ci`
+   - build the SPA with `npm run build`
+   - serve it with `npm start` on port `8080`
+
+Important:
+
+- `apprunner.yaml` is for source-code deployments, not for ECR image deployments.
+- The managed runtime must be a supported value such as `nodejs22`.
+
+## Option 2: AWS App Runner from ECR image
 
 1. Push the image to Amazon ECR.
 2. Create an App Runner service from that ECR image.
 3. Expose port `80`.
-4. Reference [apprunner.yaml](C:\Users\PC\Documents\New project\apprunner.yaml) only as a base template if you later automate service creation from source tooling.
+4. Do not use `apprunner.yaml` in this flow. App Runner will run the container image directly.
 
-## Option 2: ECS Fargate
+## Option 3: ECS Fargate
 
 1. Push the image to Amazon ECR.
 2. Use [ecs-task-definition.json](C:\Users\PC\Documents\New project\ecs-task-definition.json) as the base task definition.
