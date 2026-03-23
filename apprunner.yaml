@@ -1,0 +1,11 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      - echo "Docker image build handled by App Runner from ECR."
+run:
+  runtime-version: latest
+  command: nginx -g "daemon off;"
+  network:
+    port: 80
