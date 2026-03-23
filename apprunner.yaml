@@ -7,7 +7,7 @@ build:
     build:
       - npm run build
 run:
-  runtime-version: 22
+  runtime-version: 22.21.1
   command: npm start
   network:
     port: 8080

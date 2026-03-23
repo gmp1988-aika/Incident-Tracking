@@ -4,6 +4,9 @@
   "description": "Workspace SaaS para incidentes y salud de aplicaciones",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": "22.21.1"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
