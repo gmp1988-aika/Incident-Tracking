@@ -2692,6 +2692,8 @@ body[data-theme="dark"] .main-panel {
   height: 34px;
   border-radius: 12px;
   box-shadow: 0 12px 24px rgba(79, 140, 255, 0.28);
+  font-size: 0.74rem;
+  letter-spacing: 0.01em;
 }
 
 .sidebar__brand h1 {

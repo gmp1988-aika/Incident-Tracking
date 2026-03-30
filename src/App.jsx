@@ -213,10 +213,10 @@ export default function App() {
       <section className="login-screen">
         <div className="login-card">
           <div className="login-card__brand">
-            <span className="brand-mark">IH</span>
+            <span className="brand-mark">PM+</span>
             <div>
               <p className="eyebrow">Workspace</p>
-              <h1>Incident Tracking</h1>
+              <h1>PM+</h1>
             </div>
           </div>
           <div className="login-card__copy">
@@ -255,10 +255,10 @@ export default function App() {
       <div className={`app-shell ${isSidebarCollapsed ? "is-sidebar-collapsed" : ""}`}>
         <aside className={`sidebar ${isSidebarCollapsed ? "is-collapsed" : ""}`} id="sidebar">
           <div className="sidebar__brand">
-            <div className="brand-mark">IH</div>
+            <div className="brand-mark">PM+</div>
             <div>
               <p className="eyebrow">Workspace</p>
-              <h1>Workspace de Incidentes</h1>
+              <h1>PM+</h1>
             </div>
           </div>
 
@@ -679,7 +679,7 @@ function UploaderFallback({ onClose }) {
       <div className="uploader-card">
         <div className="uploader-card__header">
           <div>
-            <p className="eyebrow">Incident Tracking</p>
+            <p className="eyebrow">PM+</p>
             <h3>Cargar archivo Excel</h3>
           </div>
           <button className="icon-button" onClick={onClose} aria-label="Cerrar">X</button>
