@@ -1,5 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { BarChart, DonutChart, MiniSparkline, TrendChart } from "./DashboardCharts";
+import CapaciTrackModule, { SEED_MILESTONES, SEED_PEOPLE, SEED_PROJECTS, SEED_ROLES } from "./CapaciTrackModule";
+import MastersModule from "./MastersModule";
 
 const loadUploaderModal = () => import("./UploaderModal");
 
@@ -51,6 +53,11 @@ const NAV_ITEMS = [
   { key: "technicians", label: "Technicians", icon: "users" },
   { key: "quality", label: "Data Quality", icon: "shield" },
 ];
+const PLATFORM_MODULES = [
+  { key: "incidents", label: "Incidentes" },
+  { key: "projects", label: "Proyectos" },
+  { key: "masters", label: "Maestros" },
+];
 
 const AI_INSIGHTS_STORAGE_KEY = "incident-tracking-ai-insights";
 const AUTH_STORAGE_KEY = "incident-tracking-auth";
@@ -68,6 +75,15 @@ export default function App() {
   const [trendGrouping, setTrendGrouping] = useState("month");
   const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("overview");
+  const [activeModule, setActiveModule] = useState("incidents");
+  const [masterPeople, setMasterPeople] = useState(() => SEED_PEOPLE.map((person) => ({ ...person, area: person.area || "" })));
+  const [masterProjects, setMasterProjects] = useState(() => SEED_PROJECTS.map((project) => ({
+    ...project,
+    product_owner_id: project.product_owner_id || SEED_PEOPLE[0]?.id || "",
+    it_owner_id: project.it_owner_id || SEED_PEOPLE[0]?.id || "",
+  })));
+  const [masterMilestones, setMasterMilestones] = useState(() => SEED_MILESTONES);
+  const [masterRoles] = useState(() => SEED_ROLES);
   const [savedInsightsText, setSavedInsightsText] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginForm, setLoginForm] = useState({ username: DEMO_CREDENTIALS.username, password: "" });
@@ -251,8 +267,19 @@ export default function App() {
           </button>
 
           <nav className="sidebar__nav">
+            <div className="sidebar__module-switch">
+              {PLATFORM_MODULES.map((module) => (
+                <button
+                  key={module.key}
+                  className={`sidebar__module-button ${activeModule === module.key ? "active" : ""}`}
+                  onClick={() => setActiveModule(module.key)}
+                >
+                  {module.label}
+                </button>
+              ))}
+            </div>
             <p className="sidebar__label">Navigation</p>
-            {NAV_ITEMS.map((item) => (
+            {activeModule === "incidents" && NAV_ITEMS.map((item) => (
               <button
                 key={item.key}
                 className={`nav-link ${activeSection === item.key ? "active" : ""}`}
@@ -262,6 +289,16 @@ export default function App() {
                 <span>{item.label}</span>
               </button>
             ))}
+            {activeModule === "projects" && (
+              <div className="sidebar__module-copy">
+                <p>CapaciTrack centraliza capacidad, portafolio, costos y notas operativas.</p>
+              </div>
+            )}
+            {activeModule === "masters" && (
+              <div className="sidebar__module-copy">
+                <p>Administra personas, proyectos y hitos base para el portafolio.</p>
+              </div>
+            )}
           </nav>
 
           <section className="sidebar__summary">
@@ -274,7 +311,7 @@ export default function App() {
         <main className="main-panel">
           <header className="topbar" id="dashboardTop">
             <div className="topbar__controls">
-              <button className="ghost-button" onClick={() => setIsUploaderOpen(true)}>Cargar Excel</button>
+              {activeModule === "incidents" && <button className="ghost-button" onClick={() => setIsUploaderOpen(true)}>Cargar Excel</button>}
               <button className="theme-toggle" onClick={() => setTheme((current) => (current === "light" ? "dark" : "light"))} aria-label="Cambiar tema">
                 <span className="theme-toggle__icon" aria-hidden="true" />
               </button>
@@ -284,7 +321,24 @@ export default function App() {
             </div>
           </header>
 
-          {records.length === 0 ? (
+          {activeModule === "projects" ? (
+            <CapaciTrackModule
+              masterProjects={masterProjects}
+              setMasterProjects={setMasterProjects}
+              masterPeople={masterPeople}
+              masterMilestones={masterMilestones}
+            />
+          ) : activeModule === "masters" ? (
+            <MastersModule
+              people={masterPeople}
+              setPeople={setMasterPeople}
+              projects={masterProjects}
+              setProjects={setMasterProjects}
+              milestones={masterMilestones}
+              setMilestones={setMasterMilestones}
+              roles={masterRoles}
+            />
+          ) : records.length === 0 ? (
             <section className="empty-workspace">
               <div className="empty-workspace__icon" aria-hidden="true">
                 <span className="empty-workspace__bars" />
@@ -517,7 +571,7 @@ export default function App() {
         </main>
       </div>
 
-      {isUploaderOpen && (
+      {activeModule === "incidents" && isUploaderOpen && (
         <Suspense fallback={<UploaderFallback onClose={() => setIsUploaderOpen(false)} />}>
           <UploaderModal onClose={() => setIsUploaderOpen(false)} onDemo={() => { applyDataset(createDemoRows(), "Dataset demo"); setIsUploaderOpen(false); }} onFile={handleFile} />
         </Suspense>
